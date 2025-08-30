@@ -22,8 +22,9 @@ os.environ.setdefault("TRANSFORMERS_CACHE", str(BASE_DIR / ".hf_cache"))
 Path(os.environ["TRANSFORMERS_CACHE"]).mkdir(parents=True, exist_ok=True)
 
 # ===== 모델 로드 =====
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_auth_token=HF_AUTH_TOKEN)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, use_auth_token=HF_AUTH_TOKEN)
+token_kw = {"token": HF_AUTH_TOKEN} if HF_AUTH_TOKEN else {}
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, **token_kw)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, **token_kw)
 model.tokenizer = tokenizer
 model.eval()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # Render는 보통 CPU
