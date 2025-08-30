@@ -5,5 +5,5 @@ huggingface-hub==0.23.5
 python-dotenv==1.0.1
 pydantic==2.7.2
 
-# Render(CPU) 호환 PyTorch
-torch==2.5.1+cpu
+# PyPI 기본 인덱스에서 받기 (CPU용)
+torch==2.5.1
