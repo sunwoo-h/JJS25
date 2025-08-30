@@ -17,13 +17,20 @@ load_dotenv()
 HF_AUTH_TOKEN = os.getenv("HF_AUTH_TOKEN")  # Render에 환경변수로 넣기
 MODEL_NAME = os.getenv("MODEL_NAME", "Junginn/kcelectra-toxic-comment-detector_V1")
 
-# 캐시 경로(선택) - Render에서도 동작
-os.environ.setdefault("TRANSFORMERS_CACHE", str(BASE_DIR / ".hf_cache"))
-Path(os.environ["TRANSFORMERS_CACHE"]).mkdir(parents=True, exist_ok=True)
+# ✅ 토크나이저는 베이스 모델로 분리 (없으면 MODEL_NAME 사용)
+TOKENIZER_NAME = os.getenv("TOKENIZER_NAME", "beomi/KcELECTRA-base-v2022")
+
+token_kw = {"token": HF_AUTH_TOKEN} if HF_AUTH_TOKEN else {}
+
+# 1순위: 베이스 토크나이저(슬로우) 사용
+try:
+    tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME, use_fast=False, **token_kw)
+except Exception:
+    # 2순위: 동일 리포에서 fast 시도 (tokenizer.json만 있을 때)
+    tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME, use_fast=True, **token_kw)
+
 
 # ===== 모델 로드 =====
-token_kw = {"token": HF_AUTH_TOKEN} if HF_AUTH_TOKEN else {}
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=False, **token_kw)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, **token_kw)
 model.tokenizer = tokenizer
 model.eval()
