@@ -23,7 +23,7 @@ Path(os.environ["TRANSFORMERS_CACHE"]).mkdir(parents=True, exist_ok=True)
 
 # ===== 모델 로드 =====
 token_kw = {"token": HF_AUTH_TOKEN} if HF_AUTH_TOKEN else {}
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, **token_kw)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=False, **token_kw)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, **token_kw)
 model.tokenizer = tokenizer
 model.eval()
